@@ -52,33 +52,33 @@ The implementation should be designed so that additional AI providers, plans, us
 
 ## Required
 
-| Area | Technology |
-|---|---|
-| Runtime | Node.js |
-| Framework | NestJS |
-| Language | TypeScript |
-| Database | PostgreSQL |
-| ORM | Prisma |
-| Authentication | JWT |
-| Password hashing | Argon2id preferred |
-| API documentation | Swagger / OpenAPI |
-| Validation | class-validator + class-transformer |
-| Configuration | @nestjs/config |
-| HTTP client | Axios / NestJS HttpModule |
-| Testing | Jest + Supertest |
+| Area              | Technology                          |
+| ----------------- | ----------------------------------- |
+| Runtime           | Node.js                             |
+| Framework         | NestJS                              |
+| Language          | TypeScript                          |
+| Database          | PostgreSQL                          |
+| ORM               | Prisma                              |
+| Authentication    | JWT                                 |
+| Password hashing  | Argon2id preferred                  |
+| API documentation | Swagger / OpenAPI                   |
+| Validation        | class-validator + class-transformer |
+| Configuration     | @nestjs/config                      |
+| HTTP client       | Axios / NestJS HttpModule           |
+| Testing           | Jest + Supertest                    |
 
 ## Recommended
 
-| Area | Technology |
-|---|---|
-| Cache / rate limiting | Redis |
-| Queue | BullMQ |
-| Containerization | Docker + Docker Compose |
-| Logging | Pino / structured logging |
-| API security | Helmet + CORS + throttling |
-| API key encryption | AES-256-GCM with server-side encryption key |
-| CI | GitHub Actions |
-| API client collection | Postman |
+| Area                  | Technology                                  |
+| --------------------- | ------------------------------------------- |
+| Cache / rate limiting | Redis                                       |
+| Queue                 | BullMQ                                      |
+| Containerization      | Docker + Docker Compose                     |
+| Logging               | Pino / structured logging                   |
+| API security          | Helmet + CORS + throttling                  |
+| API key encryption    | AES-256-GCM with server-side encryption key |
+| CI                    | GitHub Actions                              |
+| API client collection | Postman                                     |
 
 ---
 
@@ -369,17 +369,17 @@ Example:
 
 ### Authorization Rules
 
-| Resource | USER | ADMIN |
-|---|---:|---:|
-| Own profile | CRUD | CRUD |
-| Own chats | CRUD | CRUD |
-| Own searches | CRUD/read | CRUD/read |
-| Own subscription | Read/change plan | Read/change |
-| Provider management | No | Yes |
-| User management | No | Yes |
-| System analytics | No | Yes |
-| Usage logs | Own | All |
-| Health | Basic | Detailed |
+| Resource            |             USER |       ADMIN |
+| ------------------- | ---------------: | ----------: |
+| Own profile         |             CRUD |        CRUD |
+| Own chats           |             CRUD |        CRUD |
+| Own searches        |        CRUD/read |   CRUD/read |
+| Own subscription    | Read/change plan | Read/change |
+| Provider management |               No |         Yes |
+| User management     |               No |         Yes |
+| System analytics    |               No |         Yes |
+| Usage logs          |              Own |         All |
+| Health              |            Basic |    Detailed |
 
 ---
 
@@ -653,7 +653,9 @@ Interface:
 
 ```ts
 interface AiProviderAdapter {
-  generateResponse(input: GenerateResponseInput): Promise<GenerateResponseOutput>;
+  generateResponse(
+    input: GenerateResponseInput,
+  ): Promise<GenerateResponseOutput>;
   healthCheck(): Promise<ProviderHealthResult>;
 }
 ```
@@ -1228,22 +1230,22 @@ Do not expose stack traces in production.
 
 # 30. HTTP Status Code Rules
 
-| Status | Usage |
-|---|---|
-| 200 | Successful read/update/action |
-| 201 | Resource created |
-| 204 | Successful deletion with no body |
-| 400 | Invalid request |
-| 401 | Missing/invalid authentication |
-| 403 | Authenticated but not authorized |
-| 404 | Resource not found |
-| 409 | Conflict |
-| 422 | Semantically invalid input if used |
-| 429 | Rate limit / usage limit |
-| 500 | Unexpected server error |
-| 502 | External provider failure |
-| 503 | Service unavailable |
-| 504 | Provider timeout |
+| Status | Usage                              |
+| ------ | ---------------------------------- |
+| 200    | Successful read/update/action      |
+| 201    | Resource created                   |
+| 204    | Successful deletion with no body   |
+| 400    | Invalid request                    |
+| 401    | Missing/invalid authentication     |
+| 403    | Authenticated but not authorized   |
+| 404    | Resource not found                 |
+| 409    | Conflict                           |
+| 422    | Semantically invalid input if used |
+| 429    | Rate limit / usage limit           |
+| 500    | Unexpected server error            |
+| 502    | External provider failure          |
+| 503    | Service unavailable                |
+| 504    | Provider timeout                   |
 
 ---
 
@@ -1295,6 +1297,19 @@ Recommended additional entities:
 The following is the logical schema. Exact Prisma syntax can be adjusted during implementation.
 
 ```prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ==========================================
+// ENUMS
+// ==========================================
+
 enum RoleName {
   USER
   ADMIN
@@ -1315,8 +1330,8 @@ enum SubscriptionStatus {
 
 enum AiProviderType {
   OPENAI
-  ANTHROPIC
-  GOOGLE_GEMINI
+  CLAUDE
+  GEMINI
 }
 
 enum ProviderHealthStatus {
@@ -1336,231 +1351,317 @@ enum UsageOperation {
   SEARCH
 }
 
+// ==========================================
+// USER & AUTHENTICATION
+// ==========================================
+
 model User {
   id              String        @id @default(uuid())
   name            String
   email           String        @unique
-  passwordHash    String
-  emailVerified   Boolean       @default(false)
+  passwordHash    String        @map("password_hash")
+  emailVerified   Boolean       @default(false) @map("email_verified")
   status          UserStatus    @default(ACTIVE)
 
-  roleId          String
+  roleId          String        @map("role_id")
   role            Role          @relation(fields: [roleId], references: [id])
 
   sessions        Session[]
   subscription    Subscription?
+  usageCounter    UserUsageCounter?
   conversations   Conversation[]
   searches        WebSearch[]
   usageLogs       ApiUsageLog[]
   auditLogs       AuditLog[]    @relation("AuditActor")
+  emailTokens     EmailVerificationToken[]
+  passwordResets  PasswordResetToken[]
 
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  deletedAt       DateTime?
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+  deletedAt       DateTime?     @map("deleted_at")
 
   @@index([roleId])
   @@index([status])
+  @@map("users")
 }
 
 model Role {
-  id          String   @id @default(uuid())
-  name        RoleName @unique
+  id          String    @id @default(uuid())
+  name        RoleName  @unique
   users       User[]
-  createdAt   DateTime @default(now())
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@map("roles")
 }
 
 model Session {
-  id              String   @id @default(uuid())
-  userId          String
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id               String    @id @default(uuid())
+  userId           String    @map("user_id")
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  refreshTokenHash String   @unique
-  userAgent       String?
-  ipAddress       String?
-  expiresAt       DateTime
-  revokedAt       DateTime?
+  refreshTokenHash String    @unique @map("refresh_token_hash")
+  userAgent        String?   @map("user_agent")
+  ipAddress        String?   @map("ip_address")
+  expiresAt        DateTime  @map("expires_at")
+  revokedAt        DateTime? @map("revoked_at")
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
 
   @@index([userId])
   @@index([expiresAt])
   @@index([revokedAt])
+  @@map("sessions")
 }
 
-model SubscriptionPlan {
-  id              String         @id @default(uuid())
-  name            String         @unique
-  monthlyChatLimit Int
-  monthlySearchLimit Int
-  maxPromptLength Int
-  isActive        Boolean        @default(true)
+model EmailVerificationToken {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash   String    @unique @map("token_hash")
+  expiresAt   DateTime  @map("expires_at")
+  usedAt      DateTime? @map("used_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
 
-  subscriptions   Subscription[]
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("email_verification_tokens")
+}
+
+model PasswordResetToken {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash   String    @unique @map("token_hash")
+  expiresAt   DateTime  @map("expires_at")
+  usedAt      DateTime? @map("used_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("password_reset_tokens")
+}
+
+// ==========================================
+// SUBSCRIPTION & USAGE LIMITS
+// ==========================================
+
+model SubscriptionPlan {
+  id                  String         @id @default(uuid())
+  name                String         @unique // "Free", "Premium"
+  monthlyChatLimit    Int            @map("monthly_chat_limit")
+  monthlySearchLimit  Int            @map("monthly_search_limit")
+  maxPromptLength     Int            @default(4000) @map("max_prompt_length")
+  supportsStreaming   Boolean        @default(false) @map("supports_streaming")
+  isActive            Boolean        @default(true) @map("is_active")
+
+  subscriptions       Subscription[]
+  createdAt           DateTime       @default(now()) @map("created_at")
+  updatedAt           DateTime       @updatedAt @map("updated_at")
+
+  @@map("subscription_plans")
 }
 
 model Subscription {
-  id              String              @id @default(uuid())
-  userId          String              @unique
-  user            User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                 String              @id @default(uuid())
+  userId             String              @unique @map("user_id")
+  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  planId          String
-  plan            SubscriptionPlan   @relation(fields: [planId], references: [id])
+  planId             String              @map("plan_id")
+  plan               SubscriptionPlan    @relation(fields: [planId], references: [id])
 
-  status          SubscriptionStatus  @default(ACTIVE)
-  currentPeriodStart DateTime
-  currentPeriodEnd   DateTime
+  status             SubscriptionStatus  @default(ACTIVE)
+  currentPeriodStart DateTime            @map("current_period_start")
+  currentPeriodEnd   DateTime            @map("current_period_end")
 
-  createdAt       DateTime            @default(now())
-  updatedAt       DateTime            @updatedAt
+  createdAt          DateTime            @default(now()) @map("created_at")
+  updatedAt          DateTime            @updatedAt @map("updated_at")
 
   @@index([planId])
   @@index([status])
+  @@map("subscriptions")
+}
+
+// Fast atomic counter for the "Remaining Requests API"
+model UserUsageCounter {
+  id           String   @id @default(uuid())
+  userId       String   @unique @map("user_id")
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  chatsUsed    Int      @default(0) @map("chats_used")
+  searchesUsed Int      @default(0) @map("searches_used")
+  periodStart  DateTime @map("period_start")
+  periodEnd    DateTime @map("period_end")
+
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("user_usage_counters")
 }
 
 model SubscriptionHistory {
-  id              String              @id @default(uuid())
-  userId          String
-  fromPlan        String?
-  toPlan          String
-  status          SubscriptionStatus
-  effectiveAt     DateTime            @default(now())
-  metadata        Json?
+  id          String             @id @default(uuid())
+  userId      String             @map("user_id")
+  fromPlan    String?            @map("from_plan")
+  toPlan      String             @map("to_plan")
+  status      SubscriptionStatus
+  effectiveAt DateTime           @default(now()) @map("effective_at")
+  metadata    Json?
 
   @@index([userId])
   @@index([effectiveAt])
+  @@map("subscription_histories")
 }
 
+// ==========================================
+// AI PROVIDERS & CHAT
+// ==========================================
+
 model AiProvider {
-  id              String              @id @default(uuid())
+  id              String               @id @default(uuid())
   type            AiProviderType
   name            String
-  encryptedApiKey String
-  defaultModel    String?
+  encryptedApiKey String               @map("encrypted_api_key")
+  defaultModel    String?              @map("default_model")
   config          Json?
-  isEnabled       Boolean             @default(true)
-  isDefault       Boolean             @default(false)
-  healthStatus    ProviderHealthStatus @default(UNKNOWN)
-  lastHealthCheck DateTime?
+  isEnabled       Boolean              @default(true) @map("is_enabled")
+  isDefault       Boolean              @default(false) @map("is_default")
+  healthStatus    ProviderHealthStatus @default(UNKNOWN) @map("health_status")
+  lastHealthCheck DateTime?            @map("last_health_check")
 
   conversations   Conversation[]
   usageLogs       ApiUsageLog[]
 
-  createdAt       DateTime            @default(now())
-  updatedAt       DateTime            @updatedAt
+  createdAt       DateTime             @default(now()) @map("created_at")
+  updatedAt       DateTime             @updatedAt @map("updated_at")
 
   @@index([type])
   @@index([isEnabled])
+  @@map("ai_providers")
 }
 
 model Conversation {
-  id          String       @id @default(uuid())
-  userId      String
-  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String      @id @default(uuid())
+  userId     String      @map("user_id")
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  title       String
-  providerId  String?
-  provider    AiProvider?  @relation(fields: [providerId], references: [id], onDelete: SetNull)
+  title      String
+  providerId String?     @map("provider_id")
+  provider   AiProvider? @relation(fields: [providerId], references: [id], onDelete: SetNull)
 
-  messages    Message[]
+  messages   Message[]
 
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @updatedAt @map("updated_at")
 
   @@index([userId, updatedAt])
   @@index([providerId])
+  @@map("conversations")
 }
 
 model Message {
-  id              String        @id @default(uuid())
-  conversationId   String
-  conversation    Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  id             String          @id @default(uuid())
+  conversationId String          @map("conversation_id")
+  conversation   Conversation    @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 
-  role            MessageRole
-  content         String
-  providerType    AiProviderType?
-  model           String?
-  inputTokens     Int?
-  outputTokens    Int?
-  latencyMs       Int?
+  role           MessageRole
+  content        String          @db.Text
+  providerType   AiProviderType? @map("provider_type")
+  model          String?
+  inputTokens    Int?            @map("input_tokens")
+  outputTokens   Int?            @map("output_tokens")
+  latencyMs      Int?            @map("latency_ms")
 
-  createdAt       DateTime      @default(now())
+  createdAt      DateTime        @default(now()) @map("created_at")
 
   @@index([conversationId, createdAt])
+  @@map("messages")
 }
 
+// ==========================================
+// SEARCH & CACHE
+// ==========================================
+
 model WebSearch {
-  id            String       @id @default(uuid())
-  userId        String
-  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  query         String
-  provider      String?
-  resultCount   Int?
-  cached        Boolean      @default(false)
+  query       String
+  provider    String?
+  resultCount Int?     @map("result_count")
+  cached      Boolean  @default(false)
 
-  createdAt     DateTime     @default(now())
+  createdAt   DateTime @default(now()) @map("created_at")
 
   @@index([userId, createdAt])
   @@index([query])
+  @@map("web_searches")
 }
 
+// Result caching to satisfy Search Result Caching (Bonus)
+model SearchCache {
+  id            String   @id @default(uuid())
+  queryHash     String   @unique @map("query_hash") // SHA256 of normalized query
+  query         String
+  results       Json     // Cached payload
+  expiresAt     DateTime @map("expires_at")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@index([queryHash])
+  @@index([expiresAt])
+  @@map("search_caches")
+}
+
+// ==========================================
+// LOGS & ADMIN AUDITING
+// ==========================================
+
 model ApiUsageLog {
-  id              String          @id @default(uuid())
-  userId          String?
-  user            User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  id           String          @id @default(uuid())
+  userId       String?         @map("user_id")
+  user         User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
 
-  providerId      String?
-  provider        AiProvider?     @relation(fields: [providerId], references: [id], onDelete: SetNull)
+  providerId   String?         @map("provider_id")
+  provider     AiProvider?     @relation(fields: [providerId], references: [id], onDelete: SetNull)
 
-  operation       UsageOperation
-  model           String?
-  statusCode      Int?
-  success         Boolean
-  latencyMs       Int?
-  inputTokens     Int?
-  outputTokens    Int?
-  requestId       String?
-  errorCode       String?
+  operation    UsageOperation
+  model        String?
+  statusCode   Int?            @map("status_code")
+  success      Boolean
+  latencyMs    Int?            @map("latency_ms")
+  inputTokens  Int?            @map("input_tokens")
+  outputTokens Int?            @map("output_tokens")
+  requestId    String?         @map("request_id")
+  errorCode    String?         @map("error_code")
+  errorMessage String?         @map("error_message") @db.Text
 
-  createdAt       DateTime        @default(now())
+  createdAt    DateTime        @default(now()) @map("created_at")
 
   @@index([userId, createdAt])
   @@index([providerId, createdAt])
   @@index([operation, createdAt])
   @@index([requestId])
+  @@map("api_usage_logs")
 }
 
 model AuditLog {
   id          String   @id @default(uuid())
-  actorUserId String?
+  actorUserId String?  @map("actor_user_id")
   actor       User?    @relation("AuditActor", fields: [actorUserId], references: [id], onDelete: SetNull)
 
   action      String
-  entityType  String
-  entityId    String?
+  entityType  String   @map("entity_type")
+  entityId    String?  @map("entity_id")
   metadata    Json?
-  ipAddress   String?
+  ipAddress   String?  @map("ip_address")
 
-  createdAt   DateTime @default(now())
+  createdAt   DateTime @default(now()) @map("created_at")
 
   @@index([actorUserId, createdAt])
   @@index([entityType, entityId])
   @@index([action, createdAt])
-}
-
-model EmailVerificationToken {
-  id          String   @id @default(uuid())
-  userId      String
-  tokenHash   String   @unique
-  expiresAt   DateTime
-  usedAt      DateTime?
-  createdAt   DateTime @default(now())
-
-  @@index([userId])
-  @@index([expiresAt])
+  @@map("audit_logs")
 }
 ```
 
@@ -1765,7 +1866,7 @@ new ValidationPipe({
   whitelist: true,
   forbidNonWhitelisted: true,
   transform: true,
-})
+});
 ```
 
 Rules:
