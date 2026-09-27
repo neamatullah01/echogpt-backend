@@ -36,11 +36,23 @@ export class AdminSubscriptionsController {
   ) {}
 
   @Get()
-  @ApiOperation({ summary: 'List all subscriptions' })
+  @ApiOperation({
+    summary: 'List all subscriptions',
+    description: 'Retrieves a paginated list of all user subscriptions.',
+  })
   @ApiResponse({
     status: 200,
     description: 'Returns a paginated list of subscriptions.',
+    schema: {
+      example: {
+        success: true,
+        data: [{ id: 'uuid', userId: 'user-uuid', status: 'ACTIVE', plan: { name: 'PREMIUM' } }],
+        meta: { page: 1, limit: 20, total: 1, totalPages: 1 }
+      }
+    }
   })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
   async listSubscriptions(@Query() query: AdminListSubscriptionsQueryDto) {
     const { data, meta } =
       await this.adminSubscriptionsService.listSubscriptions(query);
@@ -48,16 +60,46 @@ export class AdminSubscriptionsController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get subscription by ID' })
-  @ApiResponse({ status: 200, description: 'Returns subscription details.' })
+  @ApiOperation({
+    summary: 'Get subscription by ID',
+    description: 'Retrieves details for a specific subscription.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns subscription details.',
+    schema: {
+      example: {
+        success: true,
+        data: { id: 'uuid', userId: 'user-uuid', status: 'ACTIVE', plan: { name: 'PREMIUM' } }
+      }
+    }
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({ status: 404, description: 'Subscription not found' })
   async getSubscription(@Param('id') id: string) {
     const data = await this.adminSubscriptionsService.getSubscription(id);
     return { success: true, data };
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update a subscription' })
-  @ApiResponse({ status: 200, description: 'Returns updated subscription.' })
+  @ApiOperation({
+    summary: 'Update a subscription',
+    description: 'Updates the status of a specific subscription.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns updated subscription.',
+    schema: {
+      example: {
+        success: true,
+        data: { id: 'uuid', status: 'CANCELED' }
+      }
+    }
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({ status: 404, description: 'Subscription not found' })
   async updateSubscription(
     @Param('id') id: string,
     @Body() dto: AdminUpdateSubscriptionDto,
@@ -70,11 +112,24 @@ export class AdminSubscriptionsController {
   }
 
   @Post(':userId/activate')
-  @ApiOperation({ summary: 'Activate a subscription for a user' })
+  @ApiOperation({
+    summary: 'Activate a subscription for a user',
+    description: 'Creates or updates a subscription to a specific plan for the given user.',
+  })
   @ApiResponse({
     status: 201,
     description: 'Returns newly activated subscription.',
+    schema: {
+      example: {
+        success: true,
+        data: { id: 'uuid', userId: 'user-uuid', status: 'ACTIVE', planId: 'plan-uuid' }
+      }
+    }
   })
+  @ApiResponse({ status: 400, description: 'Plan not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({ status: 404, description: 'User not found' })
   async activateSubscription(
     @Param('userId') userId: string,
     @Body() dto: AdminActivateSubscriptionDto,
@@ -87,8 +142,23 @@ export class AdminSubscriptionsController {
   }
 
   @Post(':userId/cancel')
-  @ApiOperation({ summary: 'Cancel a subscription for a user' })
-  @ApiResponse({ status: 200, description: 'Returns canceled subscription.' })
+  @ApiOperation({
+    summary: 'Cancel a subscription for a user',
+    description: 'Cancels the active subscription for the given user.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns canceled subscription.',
+    schema: {
+      example: {
+        success: true,
+        data: { id: 'uuid', userId: 'user-uuid', status: 'CANCELED' }
+      }
+    }
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({ status: 404, description: 'Subscription not found' })
   async cancelSubscription(@Param('userId') userId: string) {
     const data =
       await this.adminSubscriptionsService.cancelSubscription(userId);

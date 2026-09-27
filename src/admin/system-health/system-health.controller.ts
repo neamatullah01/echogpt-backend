@@ -20,8 +20,30 @@ export class AdminSystemHealthController {
   constructor(private readonly healthService: AdminSystemHealthService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get detailed system health' })
-  @ApiResponse({ status: 200, description: 'Returns system health status.' })
+  @ApiOperation({
+    summary: 'Get detailed system health',
+    description: 'Returns health status for the database, AI providers, and overall system.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns system health status.',
+    schema: {
+      example: {
+        success: true,
+        data: {
+          status: 'healthy',
+          components: {
+            database: 'healthy',
+            redis: 'healthy',
+            aiProviders: 'healthy'
+          },
+          timestamp: '2026-09-25T04:20:00.000Z'
+        }
+      }
+    }
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden (requires ADMIN role)' })
   async getHealth() {
     const data = await this.healthService.getSystemHealth();
     return { success: true, data };

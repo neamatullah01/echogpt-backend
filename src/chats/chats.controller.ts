@@ -29,8 +29,19 @@ export class ChatsController {
   constructor(private readonly chatsService: ChatsService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new conversation' })
-  @ApiResponse({ status: 201, description: 'Conversation created.' })
+  @ApiOperation({
+    summary: 'Create a new conversation',
+    description: 'Initializes a new chat conversation for the authenticated user.',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Conversation created successfully.',
+    schema: {
+      example: { success: true, data: { id: 'uuid', title: 'New Chat', createdAt: '2026-09-25T00:00:00Z' } }
+    }
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async createConversation(
     @CurrentUser() user: any,
     @Body() dto: CreateChatDto
@@ -40,10 +51,23 @@ export class ChatsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'List conversations' })
+  @ApiOperation({
+    summary: 'List conversations',
+    description: 'Retrieves a paginated list of all active conversations belonging to the user.',
+  })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiResponse({ status: 200, description: 'Returns list of conversations.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns list of conversations.',
+    schema: {
+      example: {
+        success: true,
+        data: [{ id: 'uuid', title: 'How to learn NestJS', createdAt: '2026-09-25T00:00:00Z' }]
+      }
+    }
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async listConversations(
     @CurrentUser() user: any,
     @Query('page') page?: string,
@@ -56,8 +80,26 @@ export class ChatsController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a specific conversation' })
-  @ApiResponse({ status: 200, description: 'Returns conversation and messages.' })
+  @ApiOperation({
+    summary: 'Get a specific conversation',
+    description: 'Retrieves a conversation and all of its associated messages.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns conversation and messages.',
+    schema: {
+      example: {
+        success: true,
+        data: {
+          id: 'uuid',
+          title: 'New Chat',
+          messages: [{ id: 'msg-uuid', role: 'user', content: 'Hello' }]
+        }
+      }
+    }
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Conversation not found' })
   async getConversation(
     @CurrentUser() user: any,
     @Param('id') id: string
@@ -67,8 +109,20 @@ export class ChatsController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Rename a conversation' })
-  @ApiResponse({ status: 200, description: 'Conversation renamed.' })
+  @ApiOperation({
+    summary: 'Rename a conversation',
+    description: 'Updates the title of an existing conversation.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Conversation renamed.',
+    schema: {
+      example: { success: true, data: { id: 'uuid', title: 'Updated Title' } }
+    }
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Conversation not found' })
   async renameConversation(
     @CurrentUser() user: any,
     @Param('id') id: string,
@@ -79,8 +133,19 @@ export class ChatsController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete a conversation' })
-  @ApiResponse({ status: 200, description: 'Conversation deleted.' })
+  @ApiOperation({
+    summary: 'Delete a conversation',
+    description: 'Permanently deletes a conversation and its messages.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Conversation deleted.',
+    schema: {
+      example: { success: true, data: { deleted: true } }
+    }
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Conversation not found' })
   async deleteConversation(
     @CurrentUser() user: any,
     @Param('id') id: string
@@ -91,8 +156,24 @@ export class ChatsController {
 
   @Post(':id/messages')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Send a prompt to the conversation' })
-  @ApiResponse({ status: 200, description: 'AI Response.' })
+  @ApiOperation({
+    summary: 'Send a prompt to the conversation',
+    description: 'Appends a user message to the conversation, invokes the AI provider, and returns the AI response while deducting usage quota.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'AI Response.',
+    schema: {
+      example: {
+        success: true,
+        data: { message: { role: 'assistant', content: 'This is the AI response.' } }
+      }
+    }
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Quota Exceeded' })
+  @ApiResponse({ status: 404, description: 'Conversation not found' })
   async sendPrompt(
     @CurrentUser() user: any,
     @Param('id') id: string,
