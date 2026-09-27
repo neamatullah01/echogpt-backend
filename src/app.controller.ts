@@ -16,8 +16,8 @@ export class AppController {
     status: 200,
     description: 'Greeting response.',
     schema: {
-      example: 'Hello World!'
-    }
+      example: 'Hello World!',
+    },
   })
   getHello(): string {
     return this.appService.getHello();

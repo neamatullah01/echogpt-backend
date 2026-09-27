@@ -3,7 +3,7 @@ import { CreateProviderDto } from './create-provider.dto.js';
 import { IsBoolean, IsOptional } from 'class-validator';
 
 export class UpdateProviderDto extends PartialType(
-  OmitType(CreateProviderDto, ['provider'] as const)
+  OmitType(CreateProviderDto, ['provider'] as const),
 ) {}
 
 export class UpdateProviderStatusDto {

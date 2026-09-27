@@ -44,9 +44,18 @@ export class AdminProvidersController {
     schema: {
       example: {
         success: true,
-        data: [{ id: 'uuid', type: 'OPENAI', name: 'OpenAI GPT-4', isEnabled: true, isDefault: true, healthStatus: 'HEALTHY' }]
-      }
-    }
+        data: [
+          {
+            id: 'uuid',
+            type: 'OPENAI',
+            name: 'OpenAI GPT-4',
+            isEnabled: true,
+            isDefault: true,
+            healthStatus: 'HEALTHY',
+          },
+        ],
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
@@ -66,9 +75,16 @@ export class AdminProvidersController {
     schema: {
       example: {
         success: true,
-        data: { id: 'uuid', type: 'OPENAI', name: 'OpenAI GPT-4', isEnabled: true, isDefault: true, healthStatus: 'HEALTHY' }
-      }
-    }
+        data: {
+          id: 'uuid',
+          type: 'OPENAI',
+          name: 'OpenAI GPT-4',
+          isEnabled: true,
+          isDefault: true,
+          healthStatus: 'HEALTHY',
+        },
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
@@ -81,7 +97,8 @@ export class AdminProvidersController {
   @Post()
   @ApiOperation({
     summary: 'Create a new provider',
-    description: 'Registers a new AI provider and securely encrypts its API key.',
+    description:
+      'Registers a new AI provider and securely encrypts its API key.',
   })
   @ApiResponse({
     status: 201,
@@ -89,9 +106,14 @@ export class AdminProvidersController {
     schema: {
       example: {
         success: true,
-        data: { id: 'uuid', type: 'OPENAI', name: 'OpenAI GPT-4', isEnabled: true }
-      }
-    }
+        data: {
+          id: 'uuid',
+          type: 'OPENAI',
+          name: 'OpenAI GPT-4',
+          isEnabled: true,
+        },
+      },
+    },
   })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -112,9 +134,14 @@ export class AdminProvidersController {
     schema: {
       example: {
         success: true,
-        data: { id: 'uuid', type: 'OPENAI', name: 'OpenAI Updated', isEnabled: true }
-      }
-    }
+        data: {
+          id: 'uuid',
+          type: 'OPENAI',
+          name: 'OpenAI Updated',
+          isEnabled: true,
+        },
+      },
+    },
   })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -139,14 +166,17 @@ export class AdminProvidersController {
     schema: {
       example: {
         success: true,
-        data: { id: 'uuid', deleted: true }
-      }
-    }
+        data: { id: 'uuid', deleted: true },
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
   @ApiResponse({ status: 404, description: 'Provider not found' })
-  @ApiResponse({ status: 409, description: 'Conflict (Cannot delete default provider)' })
+  @ApiResponse({
+    status: 409,
+    description: 'Conflict (Cannot delete default provider)',
+  })
   async deleteProvider(@Param('id') id: string) {
     const data = await this.adminProvidersService.deleteProvider(id);
     return { success: true, data };
@@ -163,9 +193,9 @@ export class AdminProvidersController {
     schema: {
       example: {
         success: true,
-        data: { id: 'uuid', isEnabled: false }
-      }
-    }
+        data: { id: 'uuid', isEnabled: false },
+      },
+    },
   })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -182,7 +212,8 @@ export class AdminProvidersController {
   @Patch(':id/default')
   @ApiOperation({
     summary: 'Set a provider as default',
-    description: 'Sets the specified provider as the global default and unsets the previous default.',
+    description:
+      'Sets the specified provider as the global default and unsets the previous default.',
   })
   @ApiResponse({
     status: 200,
@@ -190,9 +221,9 @@ export class AdminProvidersController {
     schema: {
       example: {
         success: true,
-        data: { id: 'uuid', isDefault: true }
-      }
-    }
+        data: { id: 'uuid', isDefault: true },
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
@@ -205,7 +236,8 @@ export class AdminProvidersController {
   @Post(':id/health')
   @ApiOperation({
     summary: 'Check provider health',
-    description: 'Pings the provider API to verify availability and updates its health status.',
+    description:
+      'Pings the provider API to verify availability and updates its health status.',
   })
   @ApiResponse({
     status: 200,
@@ -213,9 +245,9 @@ export class AdminProvidersController {
     schema: {
       example: {
         success: true,
-        data: { status: 'HEALTHY', latencyMs: 150 }
-      }
-    }
+        data: { status: 'HEALTHY', latencyMs: 150 },
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })

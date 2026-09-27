@@ -1,15 +1,29 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsInt, Min, Max, IsOptional, IsString, IsEnum, IsDateString } from 'class-validator';
+import {
+  IsInt,
+  Min,
+  Max,
+  IsOptional,
+  IsString,
+  IsEnum,
+  IsDateString,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { UsageOperation } from '../../generated/prisma/enums.js';
 
 export class AdminUsageSummaryQueryDto {
-  @ApiPropertyOptional({ description: 'Start date (ISO)', example: '2026-09-01T00:00:00Z' })
+  @ApiPropertyOptional({
+    description: 'Start date (ISO)',
+    example: '2026-09-01T00:00:00Z',
+  })
   @IsOptional()
   @IsDateString()
   from?: string;
 
-  @ApiPropertyOptional({ description: 'End date (ISO)', example: '2026-09-30T00:00:00Z' })
+  @ApiPropertyOptional({
+    description: 'End date (ISO)',
+    example: '2026-09-30T00:00:00Z',
+  })
   @IsOptional()
   @IsDateString()
   to?: string;
@@ -24,7 +38,10 @@ export class AdminUsageSummaryQueryDto {
   @IsString()
   model?: string;
 
-  @ApiPropertyOptional({ description: 'Filter by operation', enum: UsageOperation })
+  @ApiPropertyOptional({
+    description: 'Filter by operation',
+    enum: UsageOperation,
+  })
   @IsOptional()
   @IsEnum(UsageOperation)
   operation?: UsageOperation;
@@ -43,7 +60,12 @@ export class AdminRequestLogsQueryDto {
   @Type(() => Number)
   page?: number = 1;
 
-  @ApiPropertyOptional({ description: 'Number of items per page', default: 20, minimum: 1, maximum: 100 })
+  @ApiPropertyOptional({
+    description: 'Number of items per page',
+    default: 20,
+    minimum: 1,
+    maximum: 100,
+  })
   @IsOptional()
   @IsInt()
   @Min(1)

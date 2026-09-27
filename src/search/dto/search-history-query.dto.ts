@@ -10,7 +10,12 @@ export class SearchHistoryQueryDto {
   @Type(() => Number)
   page?: number = 1;
 
-  @ApiPropertyOptional({ description: 'Number of items per page', default: 20, minimum: 1, maximum: 100 })
+  @ApiPropertyOptional({
+    description: 'Number of items per page',
+    default: 20,
+    minimum: 1,
+    maximum: 100,
+  })
   @IsOptional()
   @IsInt()
   @Min(1)
@@ -20,7 +25,12 @@ export class SearchHistoryQueryDto {
 }
 
 export class RecentSearchesQueryDto {
-  @ApiPropertyOptional({ description: 'Number of recent searches to return', default: 10, minimum: 1, maximum: 50 })
+  @ApiPropertyOptional({
+    description: 'Number of recent searches to return',
+    default: 10,
+    minimum: 1,
+    maximum: 50,
+  })
   @IsOptional()
   @IsInt()
   @Min(1)

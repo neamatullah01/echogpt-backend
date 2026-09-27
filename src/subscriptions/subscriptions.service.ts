@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service.js';
 import { UpgradeSubscriptionDto } from './dto/upgrade-subscription.dto.js';
 import { SubscriptionStatus } from '../generated/prisma/enums.js';
@@ -59,7 +63,6 @@ export class SubscriptionsService {
       throw new BadRequestException('You are already on this plan.');
     }
 
-    // Update the subscription
     const updatedSub = await this.prisma.subscription.update({
       where: { id: currentSub.id },
       data: {
@@ -68,7 +71,6 @@ export class SubscriptionsService {
       },
     });
 
-    // Record history
     await this.prisma.subscriptionHistory.create({
       data: {
         userId,
@@ -83,7 +85,6 @@ export class SubscriptionsService {
   }
 
   async downgradeSubscription(userId: string) {
-    // Typically downgrade to FREE
     const freePlan = await this.prisma.subscriptionPlan.findUnique({
       where: { name: 'Free' },
     });
@@ -105,7 +106,6 @@ export class SubscriptionsService {
       throw new BadRequestException('You are already on the Free plan.');
     }
 
-    // Usually downgrade happens at the end of the period, but for now we simulate it directly
     const updatedSub = await this.prisma.subscription.update({
       where: { id: currentSub.id },
       data: {
@@ -114,7 +114,6 @@ export class SubscriptionsService {
       },
     });
 
-    // Record history
     await this.prisma.subscriptionHistory.create({
       data: {
         userId,

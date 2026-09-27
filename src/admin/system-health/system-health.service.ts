@@ -13,17 +13,15 @@ export class AdminSystemHealthService {
       dbStatus = 'unhealthy';
     }
 
-    // In a real app, you would also check Redis, queues, etc.
     const redisStatus = 'healthy'; // Placeholder
-    
-    // Check providers
+
     const providers = await this.prisma.aiProvider.findMany({
-      select: { healthStatus: true }
+      select: { healthStatus: true },
     });
-    
+
     let aiProvidersStatus = 'healthy';
-    const hasUnhealthy = providers.some(p => p.healthStatus === 'UNHEALTHY');
-    const hasUnknown = providers.some(p => p.healthStatus === 'UNKNOWN');
+    const hasUnhealthy = providers.some((p) => p.healthStatus === 'UNHEALTHY');
+    const hasUnknown = providers.some((p) => p.healthStatus === 'UNKNOWN');
     if (hasUnhealthy) {
       aiProvidersStatus = 'degraded';
     } else if (hasUnknown) {
@@ -42,9 +40,9 @@ export class AdminSystemHealthService {
       components: {
         database: dbStatus,
         redis: redisStatus,
-        aiProviders: aiProvidersStatus
+        aiProviders: aiProvidersStatus,
       },
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 }

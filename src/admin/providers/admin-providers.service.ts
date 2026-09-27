@@ -1,21 +1,30 @@
-import { Injectable, NotFoundException, BadRequestException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  ConflictException,
+} from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service.js';
-import { AdminCreateProviderDto, AdminUpdateProviderDto, AdminUpdateProviderStatusDto } from '../dto/admin-providers.dto.js';
+import {
+  AdminCreateProviderDto,
+  AdminUpdateProviderDto,
+  AdminUpdateProviderStatusDto,
+} from '../dto/admin-providers.dto.js';
 import { ProviderKeyService } from '../../providers/crypto/provider-key.service.js';
 
 @Injectable()
 export class AdminProvidersService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly providerKeyService: ProviderKeyService
+    private readonly providerKeyService: ProviderKeyService,
   ) {}
 
   async listProviders() {
     const providers = await this.prisma.aiProvider.findMany({
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
 
-    return providers.map(p => this.sanitizeProvider(p));
+    return providers.map((p) => this.sanitizeProvider(p));
   }
 
   async getProvider(id: string) {
@@ -35,8 +44,8 @@ export class AdminProvidersService {
         name: dto.name,
         encryptedApiKey: encryptedKey,
         defaultModel: dto.defaultModel,
-        isEnabled: dto.isEnabled ?? true
-      }
+        isEnabled: dto.isEnabled ?? true,
+      },
     });
 
     return this.sanitizeProvider(provider);
@@ -50,7 +59,7 @@ export class AdminProvidersService {
 
     const provider = await this.prisma.aiProvider.update({
       where: { id },
-      data: dto
+      data: dto,
     });
 
     return this.sanitizeProvider(provider);
@@ -62,7 +71,9 @@ export class AdminProvidersService {
       throw new NotFoundException('Provider not found');
     }
     if (existing.isDefault) {
-      throw new ConflictException('Cannot delete the default provider. Set another provider as default first.');
+      throw new ConflictException(
+        'Cannot delete the default provider. Set another provider as default first.',
+      );
     }
 
     await this.prisma.aiProvider.delete({ where: { id } });
@@ -72,7 +83,7 @@ export class AdminProvidersService {
   async updateProviderStatus(id: string, dto: AdminUpdateProviderStatusDto) {
     const provider = await this.prisma.aiProvider.update({
       where: { id },
-      data: { isEnabled: dto.isEnabled }
+      data: { isEnabled: dto.isEnabled },
     });
     return this.sanitizeProvider(provider);
   }
@@ -83,15 +94,14 @@ export class AdminProvidersService {
       throw new NotFoundException('Provider not found');
     }
 
-    // Transaction to ensure only one default
     await this.prisma.$transaction(async (prisma) => {
       await prisma.aiProvider.updateMany({
         where: { isDefault: true },
-        data: { isDefault: false }
+        data: { isDefault: false },
       });
       await prisma.aiProvider.update({
         where: { id },
-        data: { isDefault: true }
+        data: { isDefault: true },
       });
     });
 
@@ -104,8 +114,6 @@ export class AdminProvidersService {
       throw new NotFoundException('Provider not found');
     }
 
-    // Call actual health check logic from AiProviderService in a real implementation
-    // For now, simulate a health check
     const isHealthy = true;
     const latencyMs = Math.floor(Math.random() * 500) + 100;
 
@@ -113,13 +121,13 @@ export class AdminProvidersService {
       where: { id },
       data: {
         healthStatus: isHealthy ? 'HEALTHY' : 'UNHEALTHY',
-        lastHealthCheck: new Date()
-      }
+        lastHealthCheck: new Date(),
+      },
     });
 
     return {
       status: provider.healthStatus,
-      latencyMs
+      latencyMs,
     };
   }
 
@@ -127,7 +135,7 @@ export class AdminProvidersService {
     const { encryptedApiKey, ...safeProvider } = provider;
     return {
       ...safeProvider,
-      maskedApiKey: `sk-****${encryptedApiKey.slice(-4)}` // Simplified mask logic
+      maskedApiKey: `sk-****${encryptedApiKey.slice(-4)}`, // Simplified mask logic
     };
   }
 }

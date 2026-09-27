@@ -29,7 +29,8 @@ export class AuthController {
   @Post('register')
   @ApiOperation({
     summary: 'Register a new user',
-    description: 'Registers a new user in the system and returns authentication tokens.',
+    description:
+      'Registers a new user in the system and returns authentication tokens.',
   })
   @ApiResponse({
     status: 201,
@@ -37,9 +38,13 @@ export class AuthController {
     schema: {
       example: {
         success: true,
-        data: { accessToken: 'jwt_access_token', refreshToken: 'jwt_refresh_token', user: { id: 'uuid', name: 'John', email: 'john@example.com' } }
-      }
-    }
+        data: {
+          accessToken: 'jwt_access_token',
+          refreshToken: 'jwt_refresh_token',
+          user: { id: 'uuid', name: 'John', email: 'john@example.com' },
+        },
+      },
+    },
   })
   @ApiResponse({ status: 400, description: 'Validation Error / Bad Request' })
   @ApiResponse({ status: 409, description: 'User already exists' })
@@ -54,7 +59,8 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Login user',
-    description: 'Authenticates a user and returns new access and refresh tokens.',
+    description:
+      'Authenticates a user and returns new access and refresh tokens.',
   })
   @ApiResponse({
     status: 200,
@@ -62,9 +68,13 @@ export class AuthController {
     schema: {
       example: {
         success: true,
-        data: { accessToken: 'jwt_access_token', refreshToken: 'jwt_refresh_token', user: { id: 'uuid', name: 'John', email: 'john@example.com' } }
-      }
-    }
+        data: {
+          accessToken: 'jwt_access_token',
+          refreshToken: 'jwt_refresh_token',
+          user: { id: 'uuid', name: 'John', email: 'john@example.com' },
+        },
+      },
+    },
   })
   @ApiResponse({ status: 400, description: 'Validation Error / Bad Request' })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
@@ -79,7 +89,8 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Refresh access token',
-    description: 'Refreshes an expired access token using a valid refresh token.',
+    description:
+      'Refreshes an expired access token using a valid refresh token.',
   })
   @ApiResponse({
     status: 200,
@@ -87,9 +98,12 @@ export class AuthController {
     schema: {
       example: {
         success: true,
-        data: { accessToken: 'new_jwt_access_token', refreshToken: 'new_jwt_refresh_token' }
-      }
-    }
+        data: {
+          accessToken: 'new_jwt_access_token',
+          refreshToken: 'new_jwt_refresh_token',
+        },
+      },
+    },
   })
   @ApiResponse({ status: 400, description: 'Validation Error / Bad Request' })
   @ApiResponse({ status: 401, description: 'Invalid or expired refresh token' })
@@ -104,14 +118,15 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Logout user session',
-    description: 'Revokes the provided refresh token, ending the specific session.',
+    description:
+      'Revokes the provided refresh token, ending the specific session.',
   })
   @ApiResponse({
     status: 200,
     description: 'Logged out successfully',
     schema: {
-      example: { success: true, data: {} }
-    }
+      example: { success: true, data: {} },
+    },
   })
   @ApiResponse({ status: 400, description: 'Validation Error / Bad Request' })
   async logout(@Body() dto: RefreshTokenDto) {
@@ -125,14 +140,15 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Logout all sessions',
-    description: 'Revokes all active sessions and refresh tokens for the authenticated user.',
+    description:
+      'Revokes all active sessions and refresh tokens for the authenticated user.',
   })
   @ApiResponse({
     status: 200,
     description: 'Logged out of all sessions',
     schema: {
-      example: { success: true, data: {} }
-    }
+      example: { success: true, data: {} },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async logoutAll(@Req() req: any) {
@@ -151,10 +167,13 @@ export class AuthController {
     status: 200,
     description: 'Email verified successfully',
     schema: {
-      example: { success: true, data: {} }
-    }
+      example: { success: true, data: {} },
+    },
   })
-  @ApiResponse({ status: 400, description: 'Invalid or expired verification token' })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid or expired verification token',
+  })
   async verifyEmail(@Body() dto: VerifyEmailDto) {
     await this.authService.verifyEmail(dto);
     return { success: true, data: {} };
@@ -166,14 +185,15 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Resend verification email',
-    description: 'Resends an email verification link to the authenticated user.',
+    description:
+      'Resends an email verification link to the authenticated user.',
   })
   @ApiResponse({
     status: 200,
     description: 'Verification email resent',
     schema: {
-      example: { success: true, data: { message: 'Verification email sent' } }
-    }
+      example: { success: true, data: { message: 'Verification email sent' } },
+    },
   })
   @ApiResponse({ status: 400, description: 'Email already verified' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })

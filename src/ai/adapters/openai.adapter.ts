@@ -1,13 +1,16 @@
-import { AiProviderAdapter, GenerateResponseInput, GenerateResponseOutput, ProviderHealthResult } from '../interfaces/ai-provider.interface.js';
+import {
+  AiProviderAdapter,
+  GenerateResponseInput,
+  GenerateResponseOutput,
+  ProviderHealthResult,
+} from '../interfaces/ai-provider.interface.js';
 
 export class OpenAiAdapter implements AiProviderAdapter {
-  async generateResponse(input: GenerateResponseInput): Promise<GenerateResponseOutput> {
+  async generateResponse(
+    input: GenerateResponseInput,
+  ): Promise<GenerateResponseOutput> {
     const model = input.model || 'gpt-3.5-turbo';
-    
-    // Simulate API call for now (or implement actual fetch)
-    // If a real key is provided, one would use:
-    // fetch('https://api.openai.com/v1/chat/completions', ...)
-    
+
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({
@@ -15,18 +18,20 @@ export class OpenAiAdapter implements AiProviderAdapter {
           tokenUsage: {
             promptTokens: 10,
             completionTokens: 20,
-            totalTokens: 30
-          }
+            totalTokens: 30,
+          },
         });
       }, 500);
     });
   }
 
-  async *generateStream(input: GenerateResponseInput): AsyncGenerator<string, void, unknown> {
+  async *generateStream(
+    input: GenerateResponseInput,
+  ): AsyncGenerator<string, void, unknown> {
     const text = `Simulated streaming response from OpenAI for prompt: "${input.prompt}"`;
     const words = text.split(' ');
     for (const word of words) {
-      await new Promise(resolve => setTimeout(resolve, 100)); // simulate delay
+      await new Promise((resolve) => setTimeout(resolve, 100)); // simulate delay
       yield word + ' ';
     }
   }
@@ -36,7 +41,7 @@ export class OpenAiAdapter implements AiProviderAdapter {
       setTimeout(() => {
         resolve({
           status: 'HEALTHY',
-          latencyMs: 120
+          latencyMs: 120,
         });
       }, 120);
     });

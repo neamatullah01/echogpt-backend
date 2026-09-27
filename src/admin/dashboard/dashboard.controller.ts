@@ -22,7 +22,8 @@ export class DashboardController {
   @Get()
   @ApiOperation({
     summary: 'Get admin dashboard statistics',
-    description: 'Retrieves aggregate statistics for users, subscriptions, usage, and providers.',
+    description:
+      'Retrieves aggregate statistics for users, subscriptions, usage, and providers.',
   })
   @ApiResponse({
     status: 200,
@@ -34,10 +35,10 @@ export class DashboardController {
           users: { total: 1000, active: 850 },
           subscriptions: { free: 800, premium: 200 },
           usage: { chatRequests: 25000, searchRequests: 8000 },
-          providers: { enabled: 3, healthy: 2 }
-        }
-      }
-    }
+          providers: { enabled: 3, healthy: 2 },
+        },
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden (requires ADMIN role)' })

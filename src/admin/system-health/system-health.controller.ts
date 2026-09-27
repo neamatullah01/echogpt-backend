@@ -22,7 +22,8 @@ export class AdminSystemHealthController {
   @Get()
   @ApiOperation({
     summary: 'Get detailed system health',
-    description: 'Returns health status for the database, AI providers, and overall system.',
+    description:
+      'Returns health status for the database, AI providers, and overall system.',
   })
   @ApiResponse({
     status: 200,
@@ -35,12 +36,12 @@ export class AdminSystemHealthController {
           components: {
             database: 'healthy',
             redis: 'healthy',
-            aiProviders: 'healthy'
+            aiProviders: 'healthy',
           },
-          timestamp: '2026-09-25T04:20:00.000Z'
-        }
-      }
-    }
+          timestamp: '2026-09-25T04:20:00.000Z',
+        },
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden (requires ADMIN role)' })

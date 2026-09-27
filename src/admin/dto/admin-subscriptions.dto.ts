@@ -11,7 +11,12 @@ export class AdminListSubscriptionsQueryDto {
   @Type(() => Number)
   page?: number = 1;
 
-  @ApiPropertyOptional({ description: 'Number of items per page', default: 20, minimum: 1, maximum: 100 })
+  @ApiPropertyOptional({
+    description: 'Number of items per page',
+    default: 20,
+    minimum: 1,
+    maximum: 100,
+  })
   @IsOptional()
   @IsInt()
   @Min(1)
@@ -19,20 +24,29 @@ export class AdminListSubscriptionsQueryDto {
   @Type(() => Number)
   limit?: number = 20;
 
-  @ApiPropertyOptional({ description: 'Filter by status', enum: SubscriptionStatus })
+  @ApiPropertyOptional({
+    description: 'Filter by status',
+    enum: SubscriptionStatus,
+  })
   @IsOptional()
   @IsEnum(SubscriptionStatus)
   status?: SubscriptionStatus;
 }
 
 export class AdminUpdateSubscriptionDto {
-  @ApiProperty({ description: 'New status for the subscription', enum: SubscriptionStatus })
+  @ApiProperty({
+    description: 'New status for the subscription',
+    enum: SubscriptionStatus,
+  })
   @IsEnum(SubscriptionStatus)
   status: SubscriptionStatus;
 }
 
 export class AdminActivateSubscriptionDto {
-  @ApiProperty({ description: 'The Plan Name (e.g. PREMIUM)', example: 'PREMIUM' })
+  @ApiProperty({
+    description: 'The Plan Name (e.g. PREMIUM)',
+    example: 'PREMIUM',
+  })
   @IsString()
   planName: string;
 }

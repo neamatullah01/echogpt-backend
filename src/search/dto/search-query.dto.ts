@@ -1,14 +1,29 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsInt, Min, Max, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsInt,
+  Min,
+  Max,
+  IsOptional,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class SearchQueryDto {
-  @ApiProperty({ description: 'The search query string', example: 'latest NestJS documentation' })
+  @ApiProperty({
+    description: 'The search query string',
+    example: 'latest NestJS documentation',
+  })
   @IsString()
   @IsNotEmpty()
   query: string;
 
-  @ApiPropertyOptional({ description: 'Maximum number of results to return', default: 10, minimum: 1, maximum: 50 })
+  @ApiPropertyOptional({
+    description: 'Maximum number of results to return',
+    default: 10,
+    minimum: 1,
+    maximum: 50,
+  })
   @IsOptional()
   @IsInt()
   @Min(1)

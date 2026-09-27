@@ -13,7 +13,13 @@ import {
   HttpStatus,
   Sse,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { ChatsService } from './chats.service.js';
 import { CreateChatDto } from './dto/create-chat.dto.js';
 import { UpdateChatDto } from './dto/update-chat.dto.js';
@@ -31,20 +37,28 @@ export class ChatsController {
   @Post()
   @ApiOperation({
     summary: 'Create a new conversation',
-    description: 'Initializes a new chat conversation for the authenticated user.',
+    description:
+      'Initializes a new chat conversation for the authenticated user.',
   })
   @ApiResponse({
     status: 201,
     description: 'Conversation created successfully.',
     schema: {
-      example: { success: true, data: { id: 'uuid', title: 'New Chat', createdAt: '2026-09-25T00:00:00Z' } }
-    }
+      example: {
+        success: true,
+        data: {
+          id: 'uuid',
+          title: 'New Chat',
+          createdAt: '2026-09-25T00:00:00Z',
+        },
+      },
+    },
   })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async createConversation(
     @CurrentUser() user: any,
-    @Body() dto: CreateChatDto
+    @Body() dto: CreateChatDto,
   ) {
     const data = await this.chatsService.createConversation(user.id, dto);
     return { success: true, data };
@@ -53,7 +67,8 @@ export class ChatsController {
   @Get()
   @ApiOperation({
     summary: 'List conversations',
-    description: 'Retrieves a paginated list of all active conversations belonging to the user.',
+    description:
+      'Retrieves a paginated list of all active conversations belonging to the user.',
   })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
@@ -63,15 +78,21 @@ export class ChatsController {
     schema: {
       example: {
         success: true,
-        data: [{ id: 'uuid', title: 'How to learn NestJS', createdAt: '2026-09-25T00:00:00Z' }]
-      }
-    }
+        data: [
+          {
+            id: 'uuid',
+            title: 'How to learn NestJS',
+            createdAt: '2026-09-25T00:00:00Z',
+          },
+        ],
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async listConversations(
     @CurrentUser() user: any,
     @Query('page') page?: string,
-    @Query('limit') limit?: string
+    @Query('limit') limit?: string,
   ) {
     const p = page ? parseInt(page, 10) : 1;
     const l = limit ? parseInt(limit, 10) : 20;
@@ -93,17 +114,14 @@ export class ChatsController {
         data: {
           id: 'uuid',
           title: 'New Chat',
-          messages: [{ id: 'msg-uuid', role: 'user', content: 'Hello' }]
-        }
-      }
-    }
+          messages: [{ id: 'msg-uuid', role: 'user', content: 'Hello' }],
+        },
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Conversation not found' })
-  async getConversation(
-    @CurrentUser() user: any,
-    @Param('id') id: string
-  ) {
+  async getConversation(@CurrentUser() user: any, @Param('id') id: string) {
     const data = await this.chatsService.getConversation(user.id, id);
     return { success: true, data };
   }
@@ -117,8 +135,8 @@ export class ChatsController {
     status: 200,
     description: 'Conversation renamed.',
     schema: {
-      example: { success: true, data: { id: 'uuid', title: 'Updated Title' } }
-    }
+      example: { success: true, data: { id: 'uuid', title: 'Updated Title' } },
+    },
   })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -126,7 +144,7 @@ export class ChatsController {
   async renameConversation(
     @CurrentUser() user: any,
     @Param('id') id: string,
-    @Body() dto: UpdateChatDto
+    @Body() dto: UpdateChatDto,
   ) {
     const data = await this.chatsService.renameConversation(user.id, id, dto);
     return { success: true, data };
@@ -141,15 +159,12 @@ export class ChatsController {
     status: 200,
     description: 'Conversation deleted.',
     schema: {
-      example: { success: true, data: { deleted: true } }
-    }
+      example: { success: true, data: { deleted: true } },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Conversation not found' })
-  async deleteConversation(
-    @CurrentUser() user: any,
-    @Param('id') id: string
-  ) {
+  async deleteConversation(@CurrentUser() user: any, @Param('id') id: string) {
     const data = await this.chatsService.deleteConversation(user.id, id);
     return { success: true, data };
   }
@@ -158,7 +173,8 @@ export class ChatsController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Send a prompt to the conversation',
-    description: 'Appends a user message to the conversation, invokes the AI provider, and returns the AI response while deducting usage quota.',
+    description:
+      'Appends a user message to the conversation, invokes the AI provider, and returns the AI response while deducting usage quota.',
   })
   @ApiResponse({
     status: 200,
@@ -166,9 +182,11 @@ export class ChatsController {
     schema: {
       example: {
         success: true,
-        data: { message: { role: 'assistant', content: 'This is the AI response.' } }
-      }
-    }
+        data: {
+          message: { role: 'assistant', content: 'This is the AI response.' },
+        },
+      },
+    },
   })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -177,7 +195,7 @@ export class ChatsController {
   async sendPrompt(
     @CurrentUser() user: any,
     @Param('id') id: string,
-    @Body() dto: SendMessageDto
+    @Body() dto: SendMessageDto,
   ) {
     const data = await this.chatsService.sendPrompt(user.id, id, dto);
     return { success: true, data };
@@ -189,10 +207,14 @@ export class ChatsController {
   async streamPrompt(
     @CurrentUser() user: any,
     @Param('id') id: string,
-    @Body() dto: SendMessageDto
+    @Body() dto: SendMessageDto,
   ) {
-    const { stream } = await this.chatsService.sendPromptStream(user.id, id, dto);
-    
+    const { stream } = await this.chatsService.sendPromptStream(
+      user.id,
+      id,
+      dto,
+    );
+
     return new Observable((subscriber: any) => {
       (async () => {
         try {
@@ -201,7 +223,7 @@ export class ChatsController {
             fullResponse += chunk;
             subscriber.next({ data: { chunk } });
           }
-          // Note: In a complete implementation we would persist fullResponse here to the DB
+
           subscriber.complete();
         } catch (err) {
           subscriber.error(err);

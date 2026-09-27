@@ -1,5 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 
 generator client {
   provider = "prisma-client"
@@ -9,10 +8,6 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
-
-// ==========================================
-// ENUMS
-// ==========================================
 
 enum RoleName {
   USER
@@ -55,9 +50,6 @@ enum UsageOperation {
   SEARCH
 }
 
-// ==========================================
-// USER & AUTHENTICATION
-// ==========================================
 
 model User {
   id              String        @id @default(uuid())
@@ -146,9 +138,6 @@ model PasswordResetToken {
   @@map("password_reset_tokens")
 }
 
-// ==========================================
-// SUBSCRIPTION & USAGE LIMITS
-// ==========================================
 
 model SubscriptionPlan {
   id                  String         @id @default(uuid())
@@ -186,7 +175,6 @@ model Subscription {
   @@map("subscriptions")
 }
 
-// Fast atomic counter for the "Remaining Requests API"
 model UserUsageCounter {
   id           String   @id @default(uuid())
   userId       String   @unique @map("user_id")
@@ -217,9 +205,6 @@ model SubscriptionHistory {
   @@map("subscription_histories")
 }
 
-// ==========================================
-// AI PROVIDERS & CHAT
-// ==========================================
 
 model AiProvider {
   id              String               @id @default(uuid())
@@ -282,9 +267,6 @@ model Message {
   @@map("messages")
 }
 
-// ==========================================
-// SEARCH & CACHE
-// ==========================================
 
 model WebSearch {
   id          String   @id @default(uuid())
@@ -303,12 +285,11 @@ model WebSearch {
   @@map("web_searches")
 }
 
-// Result caching to satisfy Search Result Caching (Bonus)
 model SearchCache {
   id            String   @id @default(uuid())
-  queryHash     String   @unique @map("query_hash") // SHA256 of normalized query
+  queryHash     String   @unique @map("query_hash")
   query         String
-  results       Json     // Cached payload
+  results       Json
   expiresAt     DateTime @map("expires_at")
   createdAt     DateTime @default(now()) @map("created_at")
 
@@ -317,9 +298,6 @@ model SearchCache {
   @@map("search_caches")
 }
 
-// ==========================================
-// LOGS & ADMIN AUDITING
-// ==========================================
 
 model ApiUsageLog {
   id           String          @id @default(uuid())

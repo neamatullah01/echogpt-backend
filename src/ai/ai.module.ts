@@ -6,6 +6,6 @@ import { ProvidersModule } from '../providers/providers.module.js';
 @Module({
   imports: [PrismaModule, ProvidersModule],
   providers: [AiProviderService],
-  exports: [AiProviderService]
+  exports: [AiProviderService],
 })
 export class AiModule {}

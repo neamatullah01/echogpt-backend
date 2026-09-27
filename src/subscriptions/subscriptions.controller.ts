@@ -26,13 +26,23 @@ export class SubscriptionsController {
   constructor(private readonly subscriptionsService: SubscriptionsService) {}
 
   @Get('me')
-  @ApiOperation({ summary: 'Get current subscription details', description: 'Retrieves details about the user\'s active subscription.' })
+  @ApiOperation({
+    summary: 'Get current subscription details',
+    description: "Retrieves details about the user's active subscription.",
+  })
   @ApiResponse({
     status: 200,
     description: 'Returns the current subscription plan, status, and usage.',
     schema: {
-      example: { success: true, data: { id: 'uuid', status: 'ACTIVE', plan: { name: 'FREE', maxChatRequests: 10, maxSearchRequests: 5 } } }
-    }
+      example: {
+        success: true,
+        data: {
+          id: 'uuid',
+          status: 'ACTIVE',
+          plan: { name: 'FREE', maxChatRequests: 10, maxSearchRequests: 5 },
+        },
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized access.' })
   async getCurrentSubscription(@CurrentUser() user: any) {
@@ -44,13 +54,19 @@ export class SubscriptionsController {
 
   @Post('upgrade')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Upgrade subscription plan', description: 'Upgrades the user\'s subscription to a higher tier.' })
+  @ApiOperation({
+    summary: 'Upgrade subscription plan',
+    description: "Upgrades the user's subscription to a higher tier.",
+  })
   @ApiResponse({
     status: 200,
     description: 'Upgrades the subscription to the specified plan.',
     schema: {
-      example: { success: true, data: { id: 'uuid', status: 'ACTIVE', plan: { name: 'PREMIUM' } } }
-    }
+      example: {
+        success: true,
+        data: { id: 'uuid', status: 'ACTIVE', plan: { name: 'PREMIUM' } },
+      },
+    },
   })
   @ApiResponse({
     status: 400,
@@ -70,13 +86,20 @@ export class SubscriptionsController {
 
   @Post('downgrade')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Downgrade subscription plan to Free', description: 'Downgrades the current subscription back to the default free tier.' })
+  @ApiOperation({
+    summary: 'Downgrade subscription plan to Free',
+    description:
+      'Downgrades the current subscription back to the default free tier.',
+  })
   @ApiResponse({
     status: 200,
     description: 'Downgrades the subscription to the Free plan.',
     schema: {
-      example: { success: true, data: { id: 'uuid', status: 'ACTIVE', plan: { name: 'FREE' } } }
-    }
+      example: {
+        success: true,
+        data: { id: 'uuid', status: 'ACTIVE', plan: { name: 'FREE' } },
+      },
+    },
   })
   @ApiResponse({
     status: 400,
@@ -89,13 +112,20 @@ export class SubscriptionsController {
   }
 
   @Get('usage')
-  @ApiOperation({ summary: 'Get remaining usage requests', description: 'Returns remaining allowances based on the user\'s active subscription.' })
+  @ApiOperation({
+    summary: 'Get remaining usage requests',
+    description:
+      "Returns remaining allowances based on the user's active subscription.",
+  })
   @ApiResponse({
     status: 200,
     description: 'Returns the remaining chat and search requests.',
     schema: {
-      example: { success: true, data: { chatRequestsRemaining: 8, searchRequestsRemaining: 4 } }
-    }
+      example: {
+        success: true,
+        data: { chatRequestsRemaining: 8, searchRequestsRemaining: 4 },
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized access.' })
   async getUsage(@CurrentUser() user: any) {

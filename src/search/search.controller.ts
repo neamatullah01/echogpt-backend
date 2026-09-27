@@ -40,9 +40,18 @@ export class SearchController {
     schema: {
       example: {
         success: true,
-        data: { query: 'NestJS', results: [{ title: 'NestJS - A progressive Node.js framework', link: 'https://nestjs.com', snippet: 'A progressive Node.js framework...' }] }
-      }
-    }
+        data: {
+          query: 'NestJS',
+          results: [
+            {
+              title: 'NestJS - A progressive Node.js framework',
+              link: 'https://nestjs.com',
+              snippet: 'A progressive Node.js framework...',
+            },
+          ],
+        },
+      },
+    },
   })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -66,10 +75,12 @@ export class SearchController {
     schema: {
       example: {
         success: true,
-        data: [{ id: 'uuid', query: 'NestJS', createdAt: '2026-09-25T00:00:00Z' }],
-        meta: { page: 1, limit: 20, total: 1, totalPages: 1 }
-      }
-    }
+        data: [
+          { id: 'uuid', query: 'NestJS', createdAt: '2026-09-25T00:00:00Z' },
+        ],
+        meta: { page: 1, limit: 20, total: 1, totalPages: 1 },
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async getHistory(@Request() req: any, @Query() query: SearchHistoryQueryDto) {
@@ -83,7 +94,8 @@ export class SearchController {
   @Get('recent')
   @ApiOperation({
     summary: 'Get recent unique searches',
-    description: 'Retrieves a list of recent unique search queries for the user.',
+    description:
+      'Retrieves a list of recent unique search queries for the user.',
   })
   @ApiResponse({
     status: 200,
@@ -91,9 +103,9 @@ export class SearchController {
     schema: {
       example: {
         success: true,
-        data: ['NestJS', 'React', 'TypeScript']
-      }
-    }
+        data: ['NestJS', 'React', 'TypeScript'],
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async getRecent(@Request() req: any, @Query() query: RecentSearchesQueryDto) {
@@ -112,9 +124,9 @@ export class SearchController {
     schema: {
       example: {
         success: true,
-        data: ['nestjs tutorial', 'nestjs vs express']
-      }
-    }
+        data: ['nestjs tutorial', 'nestjs vs express'],
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async getSuggestions(

@@ -10,10 +10,18 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { ProvidersService } from './providers.service.js';
 import { CreateProviderDto } from './dto/create-provider.dto.js';
-import { UpdateProviderDto, UpdateProviderStatusDto } from './dto/update-provider.dto.js';
+import {
+  UpdateProviderDto,
+  UpdateProviderStatusDto,
+} from './dto/update-provider.dto.js';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard.js';
 import { RolesGuard } from '../common/guards/roles.guard.js';
 import { Roles } from '../common/decorators/roles.decorator.js';
@@ -29,7 +37,10 @@ export class ProvidersController {
 
   @Get()
   @ApiOperation({ summary: 'List all providers (Admin)' })
-  @ApiResponse({ status: 200, description: 'Returns a list of all providers with masked API keys.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns a list of all providers with masked API keys.',
+  })
   async getProviders() {
     const data = await this.providersService.getProviders();
     return { success: true, data };
@@ -37,7 +48,10 @@ export class ProvidersController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a specific provider (Admin)' })
-  @ApiResponse({ status: 200, description: 'Returns the provider details with masked API key.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns the provider details with masked API key.',
+  })
   async getProvider(@Param('id') id: string) {
     const data = await this.providersService.getProvider(id);
     return { success: true, data };
@@ -54,10 +68,7 @@ export class ProvidersController {
   @Patch(':id')
   @ApiOperation({ summary: 'Edit an existing provider (Admin)' })
   @ApiResponse({ status: 200, description: 'Provider updated successfully.' })
-  async editProvider(
-    @Param('id') id: string,
-    @Body() dto: UpdateProviderDto
-  ) {
+  async editProvider(@Param('id') id: string, @Body() dto: UpdateProviderDto) {
     const data = await this.providersService.editProvider(id, dto);
     return { success: true, data };
   }
@@ -75,7 +86,7 @@ export class ProvidersController {
   @ApiResponse({ status: 200, description: 'Provider status updated.' })
   async updateStatus(
     @Param('id') id: string,
-    @Body() dto: UpdateProviderStatusDto
+    @Body() dto: UpdateProviderStatusDto,
   ) {
     const data = await this.providersService.updateStatus(id, dto);
     return { success: true, data };

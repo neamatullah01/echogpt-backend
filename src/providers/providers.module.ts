@@ -6,6 +6,6 @@ import { ProviderKeyService } from './crypto/provider-key.service.js';
 @Module({
   controllers: [ProvidersController],
   providers: [ProvidersService, ProviderKeyService],
-  exports: [ProvidersService, ProviderKeyService]
+  exports: [ProvidersService, ProviderKeyService],
 })
 export class ProvidersModule {}

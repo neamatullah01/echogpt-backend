@@ -46,10 +46,17 @@ export class AdminSubscriptionsController {
     schema: {
       example: {
         success: true,
-        data: [{ id: 'uuid', userId: 'user-uuid', status: 'ACTIVE', plan: { name: 'PREMIUM' } }],
-        meta: { page: 1, limit: 20, total: 1, totalPages: 1 }
-      }
-    }
+        data: [
+          {
+            id: 'uuid',
+            userId: 'user-uuid',
+            status: 'ACTIVE',
+            plan: { name: 'PREMIUM' },
+          },
+        ],
+        meta: { page: 1, limit: 20, total: 1, totalPages: 1 },
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
@@ -70,9 +77,14 @@ export class AdminSubscriptionsController {
     schema: {
       example: {
         success: true,
-        data: { id: 'uuid', userId: 'user-uuid', status: 'ACTIVE', plan: { name: 'PREMIUM' } }
-      }
-    }
+        data: {
+          id: 'uuid',
+          userId: 'user-uuid',
+          status: 'ACTIVE',
+          plan: { name: 'PREMIUM' },
+        },
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
@@ -93,9 +105,9 @@ export class AdminSubscriptionsController {
     schema: {
       example: {
         success: true,
-        data: { id: 'uuid', status: 'CANCELED' }
-      }
-    }
+        data: { id: 'uuid', status: 'CANCELED' },
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
@@ -114,7 +126,8 @@ export class AdminSubscriptionsController {
   @Post(':userId/activate')
   @ApiOperation({
     summary: 'Activate a subscription for a user',
-    description: 'Creates or updates a subscription to a specific plan for the given user.',
+    description:
+      'Creates or updates a subscription to a specific plan for the given user.',
   })
   @ApiResponse({
     status: 201,
@@ -122,9 +135,14 @@ export class AdminSubscriptionsController {
     schema: {
       example: {
         success: true,
-        data: { id: 'uuid', userId: 'user-uuid', status: 'ACTIVE', planId: 'plan-uuid' }
-      }
-    }
+        data: {
+          id: 'uuid',
+          userId: 'user-uuid',
+          status: 'ACTIVE',
+          planId: 'plan-uuid',
+        },
+      },
+    },
   })
   @ApiResponse({ status: 400, description: 'Plan not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -152,9 +170,9 @@ export class AdminSubscriptionsController {
     schema: {
       example: {
         success: true,
-        data: { id: 'uuid', userId: 'user-uuid', status: 'CANCELED' }
-      }
-    }
+        data: { id: 'uuid', userId: 'user-uuid', status: 'CANCELED' },
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })

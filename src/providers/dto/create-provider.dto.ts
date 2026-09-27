@@ -1,5 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsBoolean, IsOptional, IsEnum, IsObject } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsBoolean,
+  IsOptional,
+  IsEnum,
+  IsObject,
+} from 'class-validator';
 import { AiProviderType } from '../../generated/prisma/enums.js';
 
 export class CreateProviderDto {
@@ -8,7 +15,10 @@ export class CreateProviderDto {
   @IsNotEmpty()
   provider: AiProviderType;
 
-  @ApiProperty({ description: 'Display name for the provider', example: 'OpenAI Primary' })
+  @ApiProperty({
+    description: 'Display name for the provider',
+    example: 'OpenAI Primary',
+  })
   @IsString()
   @IsNotEmpty()
   name: string;
@@ -18,17 +28,25 @@ export class CreateProviderDto {
   @IsNotEmpty()
   apiKey: string;
 
-  @ApiPropertyOptional({ description: 'Default model to use', example: 'gpt-4o' })
+  @ApiPropertyOptional({
+    description: 'Default model to use',
+    example: 'gpt-4o',
+  })
   @IsString()
   @IsOptional()
   defaultModel?: string;
 
-  @ApiPropertyOptional({ description: 'Whether the provider is enabled', default: true })
+  @ApiPropertyOptional({
+    description: 'Whether the provider is enabled',
+    default: true,
+  })
   @IsBoolean()
   @IsOptional()
   isEnabled?: boolean;
 
-  @ApiPropertyOptional({ description: 'Additional configuration in JSON format' })
+  @ApiPropertyOptional({
+    description: 'Additional configuration in JSON format',
+  })
   @IsObject()
   @IsOptional()
   config?: any;

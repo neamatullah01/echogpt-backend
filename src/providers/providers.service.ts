@@ -1,28 +1,35 @@
-import { Injectable, NotFoundException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service.js';
 import { ProviderKeyService } from './crypto/provider-key.service.js';
 import { CreateProviderDto } from './dto/create-provider.dto.js';
-import { UpdateProviderDto, UpdateProviderStatusDto } from './dto/update-provider.dto.js';
+import {
+  UpdateProviderDto,
+  UpdateProviderStatusDto,
+} from './dto/update-provider.dto.js';
 import { ProviderHealthStatus } from '../generated/prisma/enums.js';
 
 @Injectable()
 export class ProvidersService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly cryptoService: ProviderKeyService
+    private readonly cryptoService: ProviderKeyService,
   ) {}
 
   private maskApiKey(encryptedKey: string): string {
-    // In a real system, you might decode to find length, but we just return a placeholder
     return 'sk-****abcd';
   }
 
   async getProviders() {
     const providers = await this.prisma.aiProvider.findMany({
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
-    
-    return providers.map(p => ({
+
+    return providers.map((p) => ({
       id: p.id,
       provider: p.type,
       name: p.name,
@@ -31,7 +38,7 @@ export class ProvidersService {
       isEnabled: p.isEnabled,
       isDefault: p.isDefault,
       healthStatus: p.healthStatus,
-      lastHealthCheck: p.lastHealthCheck
+      lastHealthCheck: p.lastHealthCheck,
     }));
   }
 
@@ -49,14 +56,13 @@ export class ProvidersService {
       isDefault: p.isDefault,
       config: p.config,
       healthStatus: p.healthStatus,
-      lastHealthCheck: p.lastHealthCheck
+      lastHealthCheck: p.lastHealthCheck,
     };
   }
 
   async addProvider(dto: CreateProviderDto) {
     const encryptedKey = this.cryptoService.encrypt(dto.apiKey);
-    
-    // Check if this is the first provider; if so, make it default
+
     const count = await this.prisma.aiProvider.count();
     const isDefault = count === 0;
 
@@ -69,7 +75,7 @@ export class ProvidersService {
         isEnabled: dto.isEnabled ?? true,
         isDefault,
         config: dto.config ? JSON.parse(JSON.stringify(dto.config)) : null,
-      }
+      },
     });
 
     return await this.getProvider(provider.id);
@@ -81,15 +87,17 @@ export class ProvidersService {
 
     const data: any = {};
     if (dto.name) data.name = dto.name;
-    if (dto.apiKey) data.encryptedApiKey = this.cryptoService.encrypt(dto.apiKey);
+    if (dto.apiKey)
+      data.encryptedApiKey = this.cryptoService.encrypt(dto.apiKey);
     if (dto.defaultModel !== undefined) data.defaultModel = dto.defaultModel;
     if (dto.isEnabled !== undefined) data.isEnabled = dto.isEnabled;
-    if (dto.config !== undefined) data.config = dto.config ? JSON.parse(JSON.stringify(dto.config)) : null;
+    if (dto.config !== undefined)
+      data.config = dto.config ? JSON.parse(JSON.stringify(dto.config)) : null;
 
     if (Object.keys(data).length > 0) {
       await this.prisma.aiProvider.update({
         where: { id },
-        data
+        data,
       });
     }
 
@@ -101,10 +109,11 @@ export class ProvidersService {
     if (!p) throw new NotFoundException('Provider not found');
 
     if (p.isDefault) {
-      throw new BadRequestException('Cannot delete the default provider. Set another provider as default first.');
+      throw new BadRequestException(
+        'Cannot delete the default provider. Set another provider as default first.',
+      );
     }
 
-    // Preserve usage history by relying on Prisma SetNull or just standard relations as per schema
     await this.prisma.aiProvider.delete({ where: { id } });
     return { success: true };
   }
@@ -115,7 +124,7 @@ export class ProvidersService {
 
     await this.prisma.aiProvider.update({
       where: { id },
-      data: { isEnabled: dto.isEnabled }
+      data: { isEnabled: dto.isEnabled },
     });
 
     return await this.getProvider(id);
@@ -126,16 +135,14 @@ export class ProvidersService {
     if (!p) throw new NotFoundException('Provider not found');
 
     await this.prisma.$transaction(async (tx) => {
-      // Unset existing default
       await tx.aiProvider.updateMany({
         where: { isDefault: true },
-        data: { isDefault: false }
+        data: { isDefault: false },
       });
 
-      // Set new default
       await tx.aiProvider.update({
         where: { id },
-        data: { isDefault: true }
+        data: { isDefault: true },
       });
     });
 
@@ -146,26 +153,24 @@ export class ProvidersService {
     const p = await this.prisma.aiProvider.findUnique({ where: { id } });
     if (!p) throw new NotFoundException('Provider not found');
 
-    // Simulate health check without exposing API key or doing real requests for now
     const start = Date.now();
-    // const rawKey = this.cryptoService.decrypt(p.encryptedApiKey);
-    // await requestHealth(rawKey)...
-    
-    // Fake a small delay
-    await new Promise(resolve => setTimeout(resolve, Math.random() * 200 + 50));
+
+    await new Promise((resolve) =>
+      setTimeout(resolve, Math.random() * 200 + 50),
+    );
     const latencyMs = Date.now() - start;
 
     await this.prisma.aiProvider.update({
       where: { id },
-      data: { 
+      data: {
         healthStatus: ProviderHealthStatus.HEALTHY,
-        lastHealthCheck: new Date()
-      }
+        lastHealthCheck: new Date(),
+      },
     });
 
     return {
       status: 'HEALTHY',
-      latencyMs
+      latencyMs,
     };
   }
 }

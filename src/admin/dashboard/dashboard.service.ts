@@ -14,39 +14,45 @@ export class DashboardService {
       premiumSubscriptions,
       usageCounters,
       enabledProviders,
-      healthyProviders
+      healthyProviders,
     ] = await Promise.all([
       this.prisma.user.count(),
       this.prisma.user.count({ where: { status: 'ACTIVE' } }),
-      this.prisma.subscription.count({ where: { status: SubscriptionStatus.ACTIVE, plan: { name: 'FREE' } } }),
-      this.prisma.subscription.count({ where: { status: SubscriptionStatus.ACTIVE, plan: { name: 'PREMIUM' } } }),
+      this.prisma.subscription.count({
+        where: { status: SubscriptionStatus.ACTIVE, plan: { name: 'FREE' } },
+      }),
+      this.prisma.subscription.count({
+        where: { status: SubscriptionStatus.ACTIVE, plan: { name: 'PREMIUM' } },
+      }),
       this.prisma.userUsageCounter.aggregate({
         _sum: {
           chatsUsed: true,
-          searchesUsed: true
-        }
+          searchesUsed: true,
+        },
       }),
       this.prisma.aiProvider.count({ where: { isEnabled: true } }),
-      this.prisma.aiProvider.count({ where: { isEnabled: true, healthStatus: 'HEALTHY' } })
+      this.prisma.aiProvider.count({
+        where: { isEnabled: true, healthStatus: 'HEALTHY' },
+      }),
     ]);
 
     return {
       users: {
         total: totalUsers,
-        active: activeUsers
+        active: activeUsers,
       },
       subscriptions: {
         free: freeSubscriptions,
-        premium: premiumSubscriptions
+        premium: premiumSubscriptions,
       },
       usage: {
         chatRequests: usageCounters._sum.chatsUsed || 0,
-        searchRequests: usageCounters._sum.searchesUsed || 0
+        searchRequests: usageCounters._sum.searchesUsed || 0,
       },
       providers: {
         enabled: enabledProviders,
-        healthy: healthyProviders
-      }
+        healthy: healthyProviders,
+      },
     };
   }
 }

@@ -26,7 +26,8 @@ export class AdminAnalyticsController {
   @Get('analytics/usage')
   @ApiOperation({
     summary: 'Get usage summary',
-    description: 'Retrieves aggregated API usage metrics including total requests, successful requests, and tokens used.',
+    description:
+      'Retrieves aggregated API usage metrics including total requests, successful requests, and tokens used.',
   })
   @ApiResponse({
     status: 200,
@@ -34,9 +35,16 @@ export class AdminAnalyticsController {
     schema: {
       example: {
         success: true,
-        data: { totalRequests: 1000, successfulRequests: 950, failedRequests: 50, averageLatency: 230, totalInputTokens: 50000, totalOutputTokens: 25000 }
-      }
-    }
+        data: {
+          totalRequests: 1000,
+          successfulRequests: 950,
+          failedRequests: 50,
+          averageLatency: 230,
+          totalInputTokens: 50000,
+          totalOutputTokens: 25000,
+        },
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
@@ -56,9 +64,9 @@ export class AdminAnalyticsController {
     schema: {
       example: {
         success: true,
-        data: [{ providerId: 'uuid', requestCount: 500, averageLatency: 180 }]
-      }
-    }
+        data: [{ providerId: 'uuid', requestCount: 500, averageLatency: 180 }],
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
@@ -78,9 +86,12 @@ export class AdminAnalyticsController {
     schema: {
       example: {
         success: true,
-        data: { message: 'Usage by day...', mockData: [{ date: '2026-09-25', requests: 120 }] }
-      }
-    }
+        data: {
+          message: 'Usage by day...',
+          mockData: [{ date: '2026-09-25', requests: 120 }],
+        },
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
@@ -92,7 +103,8 @@ export class AdminAnalyticsController {
   @Get('logs/requests')
   @ApiOperation({
     summary: 'Get request logs',
-    description: 'Retrieves a paginated list of API request logs without exposing sensitive information.',
+    description:
+      'Retrieves a paginated list of API request logs without exposing sensitive information.',
   })
   @ApiResponse({
     status: 200,
@@ -100,10 +112,18 @@ export class AdminAnalyticsController {
     schema: {
       example: {
         success: true,
-        data: [{ id: 'uuid', userId: 'user-uuid', endpoint: '/api/v1/chats', statusCode: 200, latencyMs: 250 }],
-        meta: { page: 1, limit: 20, total: 1, totalPages: 1 }
-      }
-    }
+        data: [
+          {
+            id: 'uuid',
+            userId: 'user-uuid',
+            endpoint: '/api/v1/chats',
+            statusCode: 200,
+            latencyMs: 250,
+          },
+        ],
+        meta: { page: 1, limit: 20, total: 1, totalPages: 1 },
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })

@@ -21,7 +21,7 @@ import { ProvidersModule } from '../providers/providers.module.js';
     AdminSubscriptionsController,
     AdminProvidersController,
     AdminAnalyticsController,
-    AdminSystemHealthController
+    AdminSystemHealthController,
   ],
   providers: [
     DashboardService,
@@ -29,7 +29,7 @@ import { ProvidersModule } from '../providers/providers.module.js';
     AdminSubscriptionsService,
     AdminProvidersService,
     AdminAnalyticsService,
-    AdminSystemHealthService
-  ]
+    AdminSystemHealthService,
+  ],
 })
 export class AdminModule {}

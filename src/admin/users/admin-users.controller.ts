@@ -44,10 +44,18 @@ export class AdminUsersController {
     schema: {
       example: {
         success: true,
-        data: [{ id: 'uuid', name: 'John Doe', email: 'john@example.com', role: { name: 'USER' }, status: 'ACTIVE' }],
-        meta: { page: 1, limit: 20, total: 1, totalPages: 1 }
-      }
-    }
+        data: [
+          {
+            id: 'uuid',
+            name: 'John Doe',
+            email: 'john@example.com',
+            role: { name: 'USER' },
+            status: 'ACTIVE',
+          },
+        ],
+        meta: { page: 1, limit: 20, total: 1, totalPages: 1 },
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden (requires ADMIN role)' })
@@ -59,7 +67,8 @@ export class AdminUsersController {
   @Get(':id')
   @ApiOperation({
     summary: 'Get a single user by ID',
-    description: 'Retrieves user details including subscriptions and usage limits.',
+    description:
+      'Retrieves user details including subscriptions and usage limits.',
   })
   @ApiResponse({
     status: 200,
@@ -67,9 +76,15 @@ export class AdminUsersController {
     schema: {
       example: {
         success: true,
-        data: { id: 'uuid', name: 'John Doe', email: 'john@example.com', role: { name: 'USER' }, status: 'ACTIVE' }
-      }
-    }
+        data: {
+          id: 'uuid',
+          name: 'John Doe',
+          email: 'john@example.com',
+          role: { name: 'USER' },
+          status: 'ACTIVE',
+        },
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden (requires ADMIN role)' })
@@ -90,13 +105,22 @@ export class AdminUsersController {
     schema: {
       example: {
         success: true,
-        data: { id: 'uuid', name: 'John Doe', email: 'john@example.com', role: { name: 'ADMIN' }, status: 'ACTIVE' }
-      }
-    }
+        data: {
+          id: 'uuid',
+          name: 'John Doe',
+          email: 'john@example.com',
+          role: { name: 'ADMIN' },
+          status: 'ACTIVE',
+        },
+      },
+    },
   })
   @ApiResponse({ status: 400, description: 'Role not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden (cannot change own role)' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden (cannot change own role)',
+  })
   async updateRole(
     @Param('id') id: string,
     @Body() dto: AdminUpdateUserRoleDto,
@@ -121,12 +145,21 @@ export class AdminUsersController {
     schema: {
       example: {
         success: true,
-        data: { id: 'uuid', name: 'John Doe', email: 'john@example.com', role: { name: 'USER' }, status: 'SUSPENDED' }
-      }
-    }
+        data: {
+          id: 'uuid',
+          name: 'John Doe',
+          email: 'john@example.com',
+          role: { name: 'USER' },
+          status: 'SUSPENDED',
+        },
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden (cannot change own status)' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden (cannot change own status)',
+  })
   async updateStatus(
     @Param('id') id: string,
     @Body() dto: AdminUpdateUserStatusDto,

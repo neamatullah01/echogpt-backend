@@ -4,6 +4,6 @@ import { SearchController } from './search.controller.js';
 
 @Module({
   providers: [SearchService],
-  controllers: [SearchController]
+  controllers: [SearchController],
 })
 export class SearchModule {}

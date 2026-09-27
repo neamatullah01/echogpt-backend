@@ -2,7 +2,10 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class SendMessageDto {
-  @ApiProperty({ description: 'The prompt text to send', example: 'Explain dependency injection in NestJS.' })
+  @ApiProperty({
+    description: 'The prompt text to send',
+    example: 'Explain dependency injection in NestJS.',
+  })
   @IsString()
   @IsNotEmpty()
   prompt: string;

@@ -11,7 +11,12 @@ export class AdminListUsersQueryDto {
   @Type(() => Number)
   page?: number = 1;
 
-  @ApiPropertyOptional({ description: 'Number of items per page', default: 20, minimum: 1, maximum: 100 })
+  @ApiPropertyOptional({
+    description: 'Number of items per page',
+    default: 20,
+    minimum: 1,
+    maximum: 100,
+  })
   @IsOptional()
   @IsInt()
   @Min(1)
@@ -34,12 +39,20 @@ export class AdminListUsersQueryDto {
   @IsEnum(UserStatus)
   status?: UserStatus;
 
-  @ApiPropertyOptional({ description: 'Sort by field', enum: ['createdAt', 'updatedAt', 'name', 'email'], default: 'createdAt' })
+  @ApiPropertyOptional({
+    description: 'Sort by field',
+    enum: ['createdAt', 'updatedAt', 'name', 'email'],
+    default: 'createdAt',
+  })
   @IsOptional()
   @IsString()
   sortBy?: 'createdAt' | 'updatedAt' | 'name' | 'email' = 'createdAt';
 
-  @ApiPropertyOptional({ description: 'Sort order', enum: ['asc', 'desc'], default: 'desc' })
+  @ApiPropertyOptional({
+    description: 'Sort order',
+    enum: ['asc', 'desc'],
+    default: 'desc',
+  })
   @IsOptional()
   @IsString()
   sortOrder?: 'asc' | 'desc' = 'desc';

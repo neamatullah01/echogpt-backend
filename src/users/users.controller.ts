@@ -8,7 +8,12 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { UsersService } from './users.service.js';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard.js';
 import { CurrentUser } from '../common/decorators/current-user.decorator.js';
@@ -23,29 +28,52 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get('me')
-  @ApiOperation({ summary: 'Get current user profile', description: 'Retrieves the profile information of the currently authenticated user.' })
+  @ApiOperation({
+    summary: 'Get current user profile',
+    description:
+      'Retrieves the profile information of the currently authenticated user.',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Profile retrieved successfully.',
     schema: {
-      example: { success: true, data: { id: 'uuid', email: 'user@example.com', name: 'John Doe', status: 'ACTIVE', createdAt: '2026-09-27' } }
-    }
+      example: {
+        success: true,
+        data: {
+          id: 'uuid',
+          email: 'user@example.com',
+          name: 'John Doe',
+          status: 'ACTIVE',
+          createdAt: '2026-09-27',
+        },
+      },
+    },
   })
-  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Unauthorized access.' })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized access.',
+  })
   async getProfile(@CurrentUser() user: any) {
     return this.usersService.getProfile(user.id);
   }
 
   @Patch('me')
-  @ApiOperation({ summary: 'Update user profile', description: 'Updates the profile information of the currently authenticated user.' })
+  @ApiOperation({
+    summary: 'Update user profile',
+    description:
+      'Updates the profile information of the currently authenticated user.',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Profile updated successfully.',
     schema: {
-      example: { success: true, data: { id: 'uuid', name: 'John Updated' } }
-    }
+      example: { success: true, data: { id: 'uuid', name: 'John Updated' } },
+    },
   })
-  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Unauthorized access.' })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized access.',
+  })
   async updateProfile(
     @CurrentUser() user: any,
     @Body() updateProfileDto: UpdateProfileDto,
@@ -54,16 +82,29 @@ export class UsersController {
   }
 
   @Patch('me/password')
-  @ApiOperation({ summary: 'Change password', description: 'Changes the password for the currently authenticated user and revokes all active sessions.' })
+  @ApiOperation({
+    summary: 'Change password',
+    description:
+      'Changes the password for the currently authenticated user and revokes all active sessions.',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Password changed successfully.',
     schema: {
-      example: { success: true, data: { message: 'Password updated successfully' } }
-    }
+      example: {
+        success: true,
+        data: { message: 'Password updated successfully' },
+      },
+    },
   })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid current password.' })
-  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Unauthorized access.' })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid current password.',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized access.',
+  })
   async changePassword(
     @CurrentUser() user: any,
     @Body() changePasswordDto: ChangePasswordDto,
@@ -73,9 +114,19 @@ export class UsersController {
 
   @Delete('me')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete account', description: 'Soft deletes the current user account and anonymizes personal information.' })
-  @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Account deleted successfully.' })
-  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Unauthorized access.' })
+  @ApiOperation({
+    summary: 'Delete account',
+    description:
+      'Soft deletes the current user account and anonymizes personal information.',
+  })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'Account deleted successfully.',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized access.',
+  })
   async deleteAccount(@CurrentUser() user: any) {
     await this.usersService.deleteAccount(user.id);
   }

@@ -22,7 +22,11 @@ export interface ProviderHealthResult {
 }
 
 export interface AiProviderAdapter {
-  generateResponse(input: GenerateResponseInput): Promise<GenerateResponseOutput>;
-  generateStream?(input: GenerateResponseInput): AsyncGenerator<string, void, unknown>;
+  generateResponse(
+    input: GenerateResponseInput,
+  ): Promise<GenerateResponseOutput>;
+  generateStream?(
+    input: GenerateResponseInput,
+  ): AsyncGenerator<string, void, unknown>;
   healthCheck(apiKey: string): Promise<ProviderHealthResult>;
 }
