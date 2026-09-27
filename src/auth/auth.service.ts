@@ -88,10 +88,10 @@ export class AuthService {
     return this.createTokens(session.user, ip, userAgent);
   }
 
-  async logout(userId: string, refreshToken: string) {
+  async logout(refreshToken: string) {
     const tokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex');
     await this.prisma.session.updateMany({
-      where: { userId, refreshTokenHash: tokenHash, revokedAt: null },
+      where: { refreshTokenHash: tokenHash, revokedAt: null },
       data: { revokedAt: new Date() },
     });
   }
