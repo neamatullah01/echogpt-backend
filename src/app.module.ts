@@ -8,6 +8,8 @@ import { UsersModule } from './users/users.module.js';
 import { RolesModule } from './roles/roles.module.js';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module.js';
 import { ProvidersModule } from './providers/providers.module.js';
+import { AiModule } from './ai/ai.module.js';
+import { ChatsModule } from './chats/chats.module.js';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { ProvidersModule } from './providers/providers.module.js';
     RolesModule,
     SubscriptionsModule,
     ProvidersModule,
+    AiModule,
+    ChatsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
