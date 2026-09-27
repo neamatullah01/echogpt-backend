@@ -10,6 +10,7 @@ import { SubscriptionsModule } from './subscriptions/subscriptions.module.js';
 import { ProvidersModule } from './providers/providers.module.js';
 import { AiModule } from './ai/ai.module.js';
 import { ChatsModule } from './chats/chats.module.js';
+import { SearchModule } from './search/search.module.js';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ChatsModule } from './chats/chats.module.js';
     ProvidersModule,
     AiModule,
     ChatsModule,
+    SearchModule,
   ],
   controllers: [AppController],
   providers: [AppService],
